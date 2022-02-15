@@ -9,6 +9,23 @@ It takes three arguments:
     -c --column     columns
 ```
 
+Example:
+```
+    x2c -i example.xml -o example.csv -c col1,col2,col3
+```
+
 The column names must match the xml tags.
 
+
+## Installation
+
+The script can be installed with `pip`:
+```
+    pip install x2c
+```
+
+Or from source (deprecated):
+```
+    python -m setup.py install
+```
 
