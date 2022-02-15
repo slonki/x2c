@@ -37,7 +37,7 @@ README = (HERE / "README.md").read_text()
 setup (
  name = 'x2c',
  description = 'A simple cli app to convert XML files to CSV, with user-defined columns.',
- version = '1.0.0',
+ version = '2.0.0',
  packages = ['x2c'], # list of all packages
  install_requires = [
      'pandas',

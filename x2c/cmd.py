@@ -22,10 +22,6 @@ import xml.etree.ElementTree as et
 import pandas as pd
 import sys, argparse
 
-class SplitArgs(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        setattr(namespace, self.dest, values.split(','))
-
 def convert():
     args = sys.argv[1:]
 
@@ -36,11 +32,9 @@ def convert():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-o', '--outfile')
-    parser.add_argument('-i', '--infile')
-    parser.add_argument('-c', '--columns', action=SplitArgs)    
+    parser.add_argument('-i', '--infile') 
     args = parser.parse_args()
 
-    cols = args.columns
     outfile = args.outfile
     infile = args.infile
 
@@ -48,16 +42,37 @@ def convert():
     root = xmlparse.getroot()
 
     for element in root:
-        tmp_d = {}
-        for c in cols:
-            try:
-                tmp_v = element.find(str(c)).text
-                tmp_d[c] = tmp_v
-            except:
-                print('No such tag as %s.' % c)
-                print('Please make sure the supplied column names match the XML tags.')
-                exit(1)
-        rows.append(tmp_d)
+    tmp_d = {}
+
+    t_atts = element.attrib
+    for a in t_atts:
+        tmp_d[a] = t_atts[a]
+        cols.append(a)
+
+    for l in element:
+        atts = l.attrib
+        for a in atts:
+            tmp_d[a] = atts[a]
+            cols.append(a)
+
+        tmp_d[l.tag] = l.text
+        cols.append(l.tag)
+    
+    rows.append(tmp_d)
+
+    cols = list(set(cols)
+
+    # for element in root:
+    #     tmp_d = {}
+    #     for c in cols:
+    #         try:
+    #             tmp_v = element.find(str(c)).text
+    #             tmp_d[c] = tmp_v
+    #         except:
+    #             print('No such tag as %s.' % c)
+    #             print('Please make sure the supplied column names match the XML tags.')
+    #             exit(1)
+    #     rows.append(tmp_d)
     
     f = pd.DataFrame(rows, columns=cols)    
     f.to_csv(outfile)
